@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Fun Facts ✨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a12;
+      --card: #13131f;
+      --border: rgba(255,255,255,0.08);
+      --accent1: #ff6b6b;
+      --accent2: #ffd93d;
+      --accent3: #6bcb77;
+      --accent4: #4d96ff;
+      --accent5: #c77dff;
+      --text: #f0f0f8;
+      --muted: rgba(240,240,248,0.5);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    /* Animated background blobs */
+    .blob-wrap {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      animation: float 12s ease-in-out infinite;
+    }
+    .blob-1 { width: 400px; height: 400px; background: var(--accent4); top: -100px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 350px; height: 350px; background: var(--accent5); bottom: -80px; right: -80px; animation-delay: -4s; }
+    .blob-3 { width: 250px; height: 250px; background: var(--accent1); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -8s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    /* Main container */
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+    }
+    .emoji-badge {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--accent4), var(--accent5), var(--accent1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+    .subtitle {
+      margin-top: 8px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    /* Fact counter */
+    .counter {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .counter span {
+      color: var(--accent2);
+    }
+
+    /* Fact card */
+    .fact-card {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fact-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .fact-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-accent, linear-gradient(90deg, var(--accent4), var(--accent5)));
+      border-radius: 24px 24px 0 0;
+    }
+
+    .category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .fact-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 80px;
+      font-weight: 800;
+      line-height: 1;
+      color: rgba(255,255,255,0.04);
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .fact-text {
+      font-size: clamp(17px, 3vw, 21px);
+      line-height: 1.65;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .fact-text strong {
+      color: var(--highlight, var(--accent2));
+      font-weight: 600;
+    }
+
+    /* Fact card animation */
+    .fact-card.animating {
+      animation: cardFlip 0.4s ease;
+    }
+    @keyframes cardFlip {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      40% { opacity: 0; transform: translateY(12px) scale(0.97); }
+      60% { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 100px;
+      padding: 14px 28px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.01em;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .btn:active { transform: translateY(0); opacity: 0.85; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent4), var(--accent5));
+      color: #fff;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* Category filter pills */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .pill {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .pill:hover, .pill.active {
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .pill.active {
+      background: rgba(77,150,255,0.15);
+      border-color: var(--accent4);
+      color: var(--accent4);
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent4), var(--accent5));
+      border-radius: 100px;
+      transition: width 0.4s ease;
+    }
+
+    /* Share toast */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e1e2e;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 14px;
+      color: var(--text);
+      transition: transform 0.3s ease;
+      z-index: 100;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Seen badge */
+    .seen-wrap {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .seen-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+    }
+
+    footer {
+      font-size: 12px;
+      color: rgba(255,255,255,0.2);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob-wrap">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<div class="container">
+
+  <header>
+    <span class="emoji-badge" id="headerEmoji">🤯</span>
+    <h1>Random Fun Facts</h1>
+    <p class="subtitle">Learn something new every click</p>
+  </header>
+
+  <!-- Category filter -->
+  <div class="filter-row" id="filterRow">
+    <button class="pill active" data-cat="all">All</button>
+    <button class="pill" data-cat="science">🔬 Science</button>
+    <button class="pill" data-cat="animals">🐾 Animals</button>
+    <button class="pill" data-cat="history">🏛️ History</button>
+    <button class="pill" data-cat="space">🚀 Space</button>
+    <button class="pill" data-cat="food">🍕 Food</button>
+    <button class="pill" data-cat="human">🧠 Human Body</button>
+  </div>
+
+  <!-- Progress -->
+  <div style="width:100%; display:flex; flex-direction:column; gap:8px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="seen-wrap"><div class="seen-dot"></div><span id="seenLabel">0 facts seen</span></div>
+      <div class="counter">Fact <span id="factIndex">1</span> of <span id="factTotal">—</span></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  </div>
+
+  <!-- Fact card -->
+  <div class="fact-card" id="factCard">
+    <div class="fact-number" id="factNum">01</div>
+    <div class="category-tag" id="categoryTag">🔬 Science</div>
+    <p class="fact-text" id="factText">Loading a fun fact...</p>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="nextFact()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Next Fact
+    </button>
+    <button class="btn btn-secondary" onclick="shuffleFact()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+      Shuffle
+    </button>
+    <button class="btn btn-secondary" onclick="shareFact()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
+  </div>
+
+  <footer>Click "Next Fact" or press <kbd style="background:rgba(255,255,255,0.08);padding:2px 6px;border-radius:4px;font-size:11px;">Space</kbd> for a new fact</footer>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ Fact copied to clipboard!</div>
+
+<script>
+  const facts = [
+    // Science
+    { cat: "science", emoji: "🔬", text: "Honey never spoils. Archaeologists have found <strong>3,000-year-old honey</strong> in Egyptian tombs that was still perfectly edible.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#ff6b6b)" },
+    { cat: "science", emoji: "⚡", text: "Lightning strikes the Earth about <strong>100 times every second</strong> — that's over 8 million times a day.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#4d96ff)" },
+    { cat: "science", emoji: "💧", text: "Hot water can freeze faster than cold water under certain conditions. This is known as the <strong>Mpemba effect</strong>.", accent: "#4d96ff", gradient: "linear-gradient(90deg,#4d96ff,#6bcb77)" },
+    { cat: "science", emoji: "🧪", text: "A teaspoon of <strong>neutron star material</strong> would weigh about 10 million tonnes — roughly the weight of Mount Everest.", accent: "#c77dff", gradient: "linear-gradient(90deg,#c77dff,#4d96ff)" },
+    { cat: "science", emoji: "🌡️", text: "The coldest temperature ever recorded on Earth was <strong>−89.2°C (−128.6°F)</strong> at Vostok Station, Antarctica in 1983.", accent: "#4d96ff", gradient: "linear-gradient(90deg,#4d96ff,#c77dff)" },
+    { cat: "science", emoji: "🔥", text: "Fire is not a solid, liquid, or gas — it's actually a <strong>plasma</strong>, the fourth state of matter.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#ffd93d)" },
+
+    // Animals
+    { cat: "animals", emoji: "🐙", text: "Octopuses have <strong>three hearts</strong>, nine brains (one central and one per arm), and blue blood.", accent: "#6bcb77", gradient: "linear-gradient(90deg,#6bcb77,#4d96ff)" },
+    { cat: "animals", emoji: "🦈", text: "Sharks are older than trees. Sharks have existed for <strong>450 million years</strong>, while trees only appeared 350 million years ago.", accent: "#4d96ff", gradient: "linear-gradient(90deg,#4d96ff,#6bcb77)" },
+    { cat: "animals", emoji: "🐘", text: "Elephants are the only animals that <strong>cannot jump</strong>. They also can't trot — they walk or run.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#6bcb77)" },
+    { cat: "animals", emoji: "🦦", text: "Sea otters hold hands while sleeping so they don't <strong>drift apart</strong> in the current. This is called a raft.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#ffd93d)" },
+    { cat: "animals", emoji: "🐝", text: "A single bee produces only <strong>1/12 of a teaspoon</strong> of honey in its entire lifetime.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#ff6b6b)" },
+    { cat: "animals", emoji: "🦜", text: "Parrots are one of the very few animals that can <strong>mimic human speech</strong> and actually understand the context of some words.", accent: "#6bcb77", gradient: "linear-gradient(90deg,#6bcb77,#ffd93d)" },
+
+    // History
+    { cat: "history", emoji: "🏛️", text: "Cleopatra lived <strong>closer in time to the Moon landing</strong> than to the construction of the Great Pyramid of Giza.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#c77dff)" },
+    { cat: "history", emoji: "📜", text: "The shortest war in history was between <strong>Britain and Zanzibar</strong> in 1896 — it lasted between 38 and 45 minutes.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#ffd93d)" },
+    { cat: "history", emoji: "🗺️", text: "Oxford University is <strong>older than the Aztec Empire</strong>. Teaching began at Oxford around 1096; the Aztec Empire was founded in 1428.", accent: "#c77dff", gradient: "linear-gradient(90deg,#c77dff,#ff6b6b)" },
+    { cat: "history", emoji: "🎭", text: "Ancient Romans used <strong>crushed mouse brains</strong> as toothpaste. They also used urine as mouthwash.", accent: "#6bcb77", gradient: "linear-gradient(90deg,#6bcb77,#ffd93d)" },
+    { cat: "history", emoji: "⚔️", text: "The <strong>Viking Age</strong> lasted from 793 to 1066 AD — roughly 273 years. During this time, Vikings reached North America, 500 years before Columbus.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#4d96ff)" },
+
+    // Space
+    { cat: "space", emoji: "🚀", text: "A day on Venus is <strong>longer than a year</strong> on Venus. It takes 243 Earth days to rotate once, but only 225 Earth days to orbit the Sun.", accent: "#c77dff", gradient: "linear-gradient(90deg,#c77dff,#ff6b6b)" },
+    { cat: "space", emoji: "🌌", text: "There are more stars in the observable universe than <strong>grains of sand on all of Earth's beaches</strong> — roughly 10²⁴ stars.", accent: "#4d96ff", gradient: "linear-gradient(90deg,#4d96ff,#c77dff)" },
+    { cat: "space", emoji: "🌙", text: "The Moon is slowly drifting away from Earth at about <strong>3.8 cm per year</strong> — roughly the same rate your fingernails grow.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#4d96ff)" },
+    { cat: "space", emoji: "☀️", text: "The Sun accounts for <strong>99.86% of the total mass</strong> of our entire solar system.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#ffd93d)" },
+    { cat: "space", emoji: "🪐", text: "Saturn's rings are <strong>incredibly thin</strong> — up to 282,000 km wide but only about 10 metres thick in places.", accent: "#c77dff", gradient: "linear-gradient(90deg,#c77dff,#4d96ff)" },
+
+    // Food
+    { cat: "food", emoji: "🍕", text: "Pizza was invented in <strong>Naples, Italy</strong> in the 18th century. The word 'pizza' first appeared in a Latin text from 997 AD.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#ffd93d)" },
+    { cat: "food", emoji: "🍫", text: "It takes approximately <strong>400 cocoa beans</strong> to make just one pound (450g) of chocolate.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#ff6b6b)" },
+    { cat: "food", emoji: "🥑", text: "Avocados are technically a <strong>single-seeded berry</strong>. Botanically speaking, so are bananas, tomatoes, and cucumbers.", accent: "#6bcb77", gradient: "linear-gradient(90deg,#6bcb77,#ffd93d)" },
+    { cat: "food", emoji: "🍯", text: "The world's most expensive spice is <strong>saffron</strong>, which can cost up to £10,000 per kilogram because each flower only produces three stigmas.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#c77dff)" },
+    { cat: "food", emoji: "🍓", text: "Strawberries are not actually berries — but <strong>bananas, avocados, and watermelons are</strong>, according to botanical classification.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#6bcb77)" },
+
+    // Human Body
+    { cat: "human", emoji: "🧠", text: "Your brain generates about <strong>20 watts of power</strong> while you're awake — enough to power a dim light bulb.", accent: "#c77dff", gradient: "linear-gradient(90deg,#c77dff,#4d96ff)" },
+    { cat: "human", emoji: "💀", text: "You are born with <strong>270 bones</strong>, but by adulthood you only have 206 — many fuse together during childhood.", accent: "#ffd93d", gradient: "linear-gradient(90deg,#ffd93d,#c77dff)" },
+    { cat: "human", emoji: "❤️", text: "Your heart beats about <strong>100,000 times per day</strong>, pumping roughly 2,000 gallons (7,500 litres) of blood through your body.", accent: "#ff6b6b", gradient: "linear-gradient(90deg,#ff6b6b,#c77dff)" },
+    { cat: "human", emoji: "👁️", text: "The human eye can distinguish about <strong>10 million different colours</strong>, but the brain can only remember a fraction of them.", accent: "#4d96ff", gradient: "linear-gradient(90deg,#4d96ff,#6bcb77)" },
+    { cat: "human", emoji: "🦷", text: "Tooth enamel is the <strong>hardest substance</strong> your body produces — even harder than bone.", accent: "#6bcb77", gradient: "linear-gradient(90deg,#6bcb77,#4d96ff)" },
+    { cat: "human", emoji: "🫁", text: "If you spread out all the airways in your lungs flat, they would cover an area roughly the size of <strong>a tennis court</strong>.", accent: "#4d96ff", gradient: "linear-gradient(90deg,#4d96ff,#6bcb77)" },
+  ];
+
+  const catLabels = {
+    science: "🔬 Science",
+    animals: "🐾 Animals",
+    history: "🏛️ History",
+    space: "🚀 Space",
+    food: "🍕 Food",
+    human: "🧠 Human Body",
+  };
+
+  let currentCat = "all";
+  let filteredFacts = [...facts];
+  let currentIndex = 0;
+  let seenIndices = new Set();
+
+  function getFiltered() {
+    return currentCat === "all" ? facts : facts.filter(f => f.cat === currentCat);
+  }
+
+  function renderFact(animate = true) {
+    const card = document.getElementById("factCard");
+    const fact = filteredFacts[currentIndex];
+
+    if (animate) {
+      card.classList.add("animating");
+      setTimeout(() => card.classList.remove("animating"), 400);
+    }
+
+    document.getElementById("factText").innerHTML = fact.text;
+    document.getElementById("categoryTag").textContent = catLabels[fact.cat];
+    document.getElementById("factNum").textContent = String(currentIndex + 1).padStart(2, "0");
+    document.getElementById("factIndex").textContent = currentIndex + 1;
+    document.getElementById("factTotal").textContent = filteredFacts.length;
+    document.getElementById("headerEmoji").textContent = fact.emoji;
+
+    // Card accent colour
+    card.style.setProperty("--card-accent", fact.gradient);
+    card.style.setProperty("--highlight", fact.accent);
+
+    // Progress bar
+    const pct = ((currentIndex + 1) / filteredFacts.length) * 100;
+    document.getElementById("progressBar").style.width = pct + "%";
+
+    // Seen tracking
+    seenIndices.add(fact.cat + currentIndex);
+    document.getElementById("seenLabel").textContent = seenIndices.size + " fact" + (seenIndices.size !== 1 ? "s" : "") + " seen";
+  }
+
+  function nextFact() {
+    currentIndex = (currentIndex + 1) % filteredFacts.length;
+    renderFact();
+  }
+
+  function shuffleFact() {
+    const prev = currentIndex;
+    let next = prev;
+    while (next === prev && filteredFacts.length > 1) {
+      next = Math.floor(Math.random() * filteredFacts.length);
+    }
+    currentIndex = next;
+    renderFact();
+  }
+
+  function shareFact() {
+    const fact = filteredFacts[currentIndex];
+    const plain = fact.text.replace(/<[^>]+>/g, "");
+    navigator.clipboard.writeText("Fun Fact: " + plain + " — All Eyes on Me Fun Facts").catch(() => {});
+    const toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2500);
+  }
+
+  // Category filter
+  document.getElementById("filterRow").addEventListener("click", (e) => {
+    const pill = e.target.closest(".pill");
+    if (!pill) return;
+    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+    pill.classList.add("active");
+    currentCat = pill.dataset.cat;
+    filteredFacts = getFiltered();
+    currentIndex = 0;
+    renderFact();
+  });
+
+  // Keyboard shortcut
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" || e.code === "ArrowRight") { e.preventDefault(); nextFact(); }
+    if (e.code === "ArrowLeft") { e.preventDefault(); currentIndex = (currentIndex - 1 + filteredFacts.length) % filteredFacts.length; renderFact(); }
+  });
+
+  // Init
+  filteredFacts = getFiltered();
+  currentIndex = Math.floor(Math.random() * filteredFacts.length);
+  renderFact(false);
+</script>
+</body>
+</html>
